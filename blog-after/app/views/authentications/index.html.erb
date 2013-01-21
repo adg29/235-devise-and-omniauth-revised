@@ -1,0 +1,41 @@
+
+<% if @authentications %>
+
+  <% unless @authentications.empty? %>
+    <p><strong>You have signed in with these services:</strong></p>
+    <div class="authentications">
+      <% for authentication in @authentications %>
+        <div class="authentication">
+          <div class="provider">
+            <%= authentication.provider_name %>
+            <%= link_to "X", authentication, :confirm => 'Are you sure you want to remove this authentication option?', :method => :delete, :class => "remove" %>
+          </div>
+          <div class="uid"><%= authentication.uid %></div>
+        </div>
+      <% end %>
+      <div class="clear"></div>
+    </div>
+  <% end %>
+  <p><strong>Add another service to sign in with:</strong></p>
+
+<% else %>
+
+  <p><strong>Sign in through one of these services:</strong></p>
+
+<% end %>
+
+<a href="/auth/foursquare" class="auth_provider"><%= image_tag "https://playfoursquare.s3.amazonaws.com/press/logo/connect-blue.png", :alt => "Foursquare" %></a>
+<br/>
+<a href="/auth/singly?service=twitter" class="auth_provider"><%= image_tag "https://dev.twitter.com/sites/default/files/images_documentation/sign-in-with-twitter-gray.png", :alt => "Twitter" %></a>
+<br/>
+<a href="/auth/singly?service=facebook" class="auth_provider"><%= image_tag "http://i.imgur.com/HqSNK.png", :alt => "Twitter" %></a>
+
+<div class="clear"></div>
+
+<% unless user_signed_in? %>
+  <p>
+    <strong>Don't use these services?</strong>
+    <%= link_to "Sign up", new_user_registration_path %> or
+    <%= link_to "sign in", new_user_session_path %> with a password.
+  </p>
+<% end %>

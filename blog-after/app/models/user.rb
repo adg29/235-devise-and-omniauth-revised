@@ -1,18 +1,21 @@
 class User < ActiveRecord::Base
+  has_many :authentications
+
   devise :database_authenticatable, :registerable, :omniauthable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :username
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :authentications
   
   validates_presence_of :username
   validates_uniqueness_of :username
 
-  def self.from_omniauth(auth)
-    where(auth.slice(:provider, :uid)).first_or_create do |user|
-      user.provider = auth.provider
-      user.uid = auth.uid
-      user.username = auth.info.nickname
-    end
+  def apply_omniauth(omniauth)
+    logger.debug('apply omniauth')
+    self.email = omniauth['info']['email'] if email.blank?
+    authentications.build(
+      :provider => omniauth['provider'], 
+      :uid => omniauth['uid'],
+      :token => omniauth['credentials']['token'])
   end
   
   def self.new_with_session(params, session)
@@ -27,7 +30,7 @@ class User < ActiveRecord::Base
   end
   
   def password_required?
-    super && provider.blank?
+    (authentications.empty? || !password.blank?) && super
   end
 
   def update_with_password(params, *options)
