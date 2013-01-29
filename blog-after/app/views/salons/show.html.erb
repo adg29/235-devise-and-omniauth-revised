@@ -1,0 +1,20 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @salon.name %>
+</p>
+
+<p>
+  <b>Lat:</b>
+  <%= @salon.lat %>
+</p>
+
+<p>
+  <b>Lng:</b>
+  <%= @salon.lng %>
+</p>
+
+
+<%= link_to 'Edit', edit_salon_path(@salon) %> |
+<%= link_to 'Back', salons_path %>
